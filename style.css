@@ -43,7 +43,7 @@ textarea {
   outline-color: #004af7;
 }
 .output-field {
-  cursor: none;
+  cursor: unset;
 }
 .output-field:focus {
   outline: none;
