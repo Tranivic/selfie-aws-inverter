@@ -39,16 +39,19 @@ textarea {
   box-sizing: border-box;
   resize: none;
 }
-.input-field{
+.input-field {
   outline-color: #004af7;
 }
-.output-field:focus{
-outline: none;
+.output-field {
+  cursor: none;
 }
-.error-msg{
+.output-field:focus {
+  outline: none;
+}
+.error-msg {
   color: red;
   transform: translateX(-30px);
-  transition: all .3s linear 0s;
+  transition: all 0.3s linear 0s;
   padding-top: 10px;
 }
 #generate-btn {
@@ -61,7 +64,7 @@ outline: none;
   color: #fff;
   font-size: 16px;
   cursor: pointer;
-  transition: all  .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 #copy-btn {
@@ -83,17 +86,17 @@ outline: none;
   opacity: 1;
   transform: translateX(0px);
 }
-.disabled{
+.disabled {
   opacity: 0;
-  transform: translateX(-30px)
+  transform: translateX(-30px);
 }
 
-#generate-btn.waiting{
+#generate-btn.waiting {
   background-color: #616161;
   cursor: unset;
 }
 
-#copy-btn.waiting{
+#copy-btn.waiting {
   background-color: #616161;
   cursor: unset;
 }
