@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AWS Selfie Inverter 1.0</title>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+        <header>
+            <h1>Inverter Selfie AWS</h1>
+        </header>
+        <main>
+            <label for="input-field">Cole aqui o JSON gerado na AWS:</label>
+            <textarea class="input-field" name="input-field" id="input-field"
+                cols="30" rows="10" placeholder='{" data":{" uuid":" 63b84...'></textarea>
+            <span class="error-msg disabled" id="error-msg">Disabled</span>
+            <button id="generate-btn">Inverter Selfie</button>
+            <label for="output-field">JSON com a Selfie invertida:</label>
+            <textarea class="output-field" name="output-field" id="output-field"
+                cols="30" rows="10" placeholder="Aguardando..." readonly></textarea>
+            <button id="copy-btn" class="waiting">Copiar</button>
+        </main>
+        <script src="./script.js"></script>
+    </body>
+</html>
