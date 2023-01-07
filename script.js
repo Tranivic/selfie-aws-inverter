@@ -78,7 +78,7 @@ const isValidJson = async () => {
     const obj = JSON.parse(inputArea.value.trim());
     return obj;
   } catch (_) {
-    errorMsgBehavior("JSON inválido, copie novamente na AWS e refaça o processo");
+    errorMsgBehavior("JSON inválido, copie novamente na AWS e refaça o processo!");
     return false;
   }
 };
@@ -89,14 +89,14 @@ const compareJSON = (json1, json2) => {
     const keys2 = Object.keys(json2.data);
 
     if (keys1.length !== keys2.length) {
-      errorMsgBehavior(`JSON inválido, faltando algum parametro`);
+      errorMsgBehavior(`JSON inválido, faltando algum parametro!`);
       return false;
     }
 
     for (const key of keys1) {
       if (!json2.data.hasOwnProperty(key)) {
         errorMsgBehavior(
-          `O atributo ${key} está diferente do que deveria, copie novamente na AWS e refaça o processo`
+          `O atributo ${key} está diferente do padrão, copie novamente na AWS e refaça o processo!`
         );
         return false;
       }
@@ -104,14 +104,14 @@ const compareJSON = (json1, json2) => {
     for (const key of Object.keys(json1.data.images)) {
       if (!json2.data.images.hasOwnProperty(key)) {
         errorMsgBehavior(
-          `O atributo ${key} está diferente do que deveria, copie novamente na AWS e refaça o processo`
+          `O atributo ${key} está diferente do padrão, copie novamente na AWS e refaça o processo!`
         );
         return false;
       }
     }
     if (json1.data.autoClassify === false) {
       errorMsgBehavior(
-        "Confira se esse JSON já não foi invertido anteriormente (Autoclassify está com o valor de 'false')"
+        "Confira se esse JSON já não foi invertido anteriormente (Autoclassify já está com o valor de 'false')"
       );
       return false;
     }
