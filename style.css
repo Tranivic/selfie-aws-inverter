@@ -51,7 +51,7 @@ textarea {
 .error-msg {
   color: red;
   transform: translateX(-30px);
-  transition: all 0.3s linear 0s;
+  transition: all 0.2s linear 0s;
   padding-top: 10px;
 }
 #generate-btn {
@@ -99,4 +99,27 @@ textarea {
 #copy-btn.waiting {
   background-color: #616161;
   cursor: unset;
+}
+
+.input-field.error {
+  animation: shake 0.2s;
+  animation-iteration-count: initial;
+  border: 2px red solid;
+}
+@keyframes shake {
+  0% {
+    transform: translateX(0px);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }

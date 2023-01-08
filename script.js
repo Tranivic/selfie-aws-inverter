@@ -126,13 +126,13 @@ const compareJSON = (json1, json2) => {
 const errorMsgBehavior = (msg, hide) => {
   if (!hide) {
     errorMsg.innerHTML = msg;
-    inputArea.style.border = "2px solid red";
     errorMsg.classList.add("active");
     errorMsg.classList.remove("disabled")
+    inputArea.classList.add("error");
   } else {
-    inputArea.style.border = "1px solid #ccc";
     errorMsg.classList.remove("active")
     errorMsg.classList.add("disabled");;
+    inputArea.classList.remove("error");
   }
 };
 
