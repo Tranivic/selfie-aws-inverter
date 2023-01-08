@@ -1,3 +1,4 @@
+const preloader = document.getElementById("preloader");
 const errorMsg = document.getElementById("error-msg");
 const generateBtn = document.getElementById("generate-btn");
 const copyBtn = document.getElementById("copy-btn");
@@ -21,6 +22,9 @@ const comparative = {
   },
 };
 
+window.addEventListener("load", () => {
+  preloader.classList.add("hide");
+});
 generateBtn.addEventListener("click", () => {
   outputArea.value = "";
   isValidJson().then((object) => {
