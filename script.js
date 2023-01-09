@@ -28,25 +28,24 @@ window.addEventListener("load", () => {
 });
 inputArea.addEventListener("input", () => {
   if (inputArea.value.length > 0) {
-    btnBehavior(generateBtn, true);
+    btnBehavior(generateBtn, true, "Inverter Selfie");
   } else {
-    btnBehavior(generateBtn, false);
-    generateBtn.innerHTML = "Inverter Selfie";
+    btnBehavior(generateBtn, false, "Inverter Selfie");
   }
 });
 inputArea.addEventListener("focus", () => {
   errorMsgBehavior("", "hide");
-  console.log(newJson)
+  console.log(newJson);
 });
 generateBtn.addEventListener("click", () => {
   outputArea.value = "";
-  btnBehavior(copyBtn, false);
+  btnBehavior(copyBtn, false, "Copiar");
   isValidJson().then((object) => {
     if (object != false) {
       if (compareJSON(object, comparative)) {
         invertSelfie(object).then((_) => {
-          btnBehavior(generateBtn, false);
-          btnBehavior(copyBtn, true);
+          btnBehavior(generateBtn, false, "Inverter Selfie");
+          btnBehavior(copyBtn, true, "Copiar");
         });
       }
     }
@@ -55,7 +54,7 @@ generateBtn.addEventListener("click", () => {
 copyBtn.addEventListener("click", () => {
   if (outputArea.value.length) {
     copyContent().then((_) => {
-      btnBehavior(copyBtn, false);
+      btnBehavior(copyBtn, false, "Copiado!");
     });
   }
 });
@@ -145,27 +144,27 @@ const errorMsgBehavior = (msg, hide) => {
   }
 };
 
-const btnBehavior = (type, turnOn) => {
+const btnBehavior = (type, turnOn, msg) => {
   if (type === generateBtn) {
     if (turnOn === false) {
-      type.innerHTML = "Selfie Invertida";
+      type.innerHTML = msg;
       type.classList.add("waiting");
       type.disabled = true;
     }
     if (turnOn === true) {
-      type.innerHTML = "Inverter Selfie";
+      type.innerHTML = msg;
       type.classList.remove("waiting");
       type.disabled = false;
     }
   }
   if (type === copyBtn) {
     if (turnOn === false) {
-      type.innerHTML = "Copiado";
+      type.innerHTML = msg;
       type.classList.add("waiting");
       type.disabled = true;
     }
     if (turnOn === true) {
-      type.innerHTML = "Copiar";
+      type.innerHTML = msg;
       type.classList.remove("waiting");
       type.disabled = false;
     }
