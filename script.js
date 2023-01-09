@@ -4,6 +4,7 @@ const generateBtn = document.getElementById("generate-btn");
 const copyBtn = document.getElementById("copy-btn");
 const inputArea = document.getElementById("input-field");
 const outputArea = document.getElementById("output-field");
+var newJson = {};
 const comparative = {
   data: {
     uuid: "",
@@ -25,8 +26,21 @@ const comparative = {
 window.addEventListener("load", () => {
   preloader.classList.add("hide");
 });
+inputArea.addEventListener("input", () => {
+  if (inputArea.value.length > 0) {
+    btnBehavior(generateBtn, true);
+  } else {
+    btnBehavior(generateBtn, false);
+    generateBtn.innerHTML = "Inverter Selfie";
+  }
+});
+inputArea.addEventListener("focus", () => {
+  errorMsgBehavior("", "hide");
+  console.log(newJson)
+});
 generateBtn.addEventListener("click", () => {
   outputArea.value = "";
+  btnBehavior(copyBtn, false);
   isValidJson().then((object) => {
     if (object != false) {
       if (compareJSON(object, comparative)) {
@@ -38,23 +52,12 @@ generateBtn.addEventListener("click", () => {
     }
   });
 });
-inputArea.addEventListener("input", ()=>{
-  if (inputArea.value.length > 0){
-    btnBehavior(generateBtn, true)
-  } else {
-    btnBehavior(generateBtn, false)
-    generateBtn.innerHTML = "Inverter Selfie"
-  }
-})
 copyBtn.addEventListener("click", () => {
   if (outputArea.value.length) {
     copyContent().then((_) => {
       btnBehavior(copyBtn, false);
     });
   }
-});
-inputArea.addEventListener("focus", () => {
-  errorMsgBehavior("", "hide");
 });
 
 const invertSelfie = async (object) => {
@@ -82,7 +85,9 @@ const isValidJson = async () => {
     const obj = JSON.parse(inputArea.value.trim());
     return obj;
   } catch (_) {
-    errorMsgBehavior("JSON inválido, copie novamente na AWS e refaça o processo!");
+    errorMsgBehavior(
+      "JSON inválido, copie novamente na AWS e refaça o processo!"
+    );
     return false;
   }
 };
@@ -131,11 +136,11 @@ const errorMsgBehavior = (msg, hide) => {
   if (!hide) {
     errorMsg.innerHTML = msg;
     errorMsg.classList.add("active");
-    errorMsg.classList.remove("disabled")
+    errorMsg.classList.remove("disabled");
     inputArea.classList.add("error");
   } else {
-    errorMsg.classList.remove("active")
-    errorMsg.classList.add("disabled");;
+    errorMsg.classList.remove("active");
+    errorMsg.classList.add("disabled");
     inputArea.classList.remove("error");
   }
 };
