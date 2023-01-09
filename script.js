@@ -4,7 +4,6 @@ const generateBtn = document.getElementById("generate-btn");
 const copyBtn = document.getElementById("copy-btn");
 const inputArea = document.getElementById("input-field");
 const outputArea = document.getElementById("output-field");
-var newJson = {};
 const comparative = {
   data: {
     uuid: "",
@@ -22,6 +21,10 @@ const comparative = {
     templateId: "",
   },
 };
+var newJson = {};
+
+
+// EventListeners
 
 window.addEventListener("load", () => {
   preloader.classList.add("hide");
@@ -35,7 +38,6 @@ inputArea.addEventListener("input", () => {
 });
 inputArea.addEventListener("focus", () => {
   errorMsgBehavior("", "hide");
-  console.log(newJson);
 });
 generateBtn.addEventListener("click", () => {
   outputArea.value = "";
@@ -58,6 +60,8 @@ copyBtn.addEventListener("click", () => {
     });
   }
 });
+
+// Functions
 
 const invertSelfie = async (object) => {
   let dataFront = object.data.images.front;

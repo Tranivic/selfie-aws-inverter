@@ -83,7 +83,7 @@ textarea {
 
 /* Preloader related --------------------------------- */
 
-.preloader-container{
+.preloader-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -95,10 +95,10 @@ textarea {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  transition: all .3s ease-out .5s ;
+  transition: all 0.3s ease-out 0.5s;
   opacity: 1;
 }
-#preloader.hide{
+#preloader.hide {
   opacity: 0;
   visibility: hidden;
 }
@@ -117,13 +117,13 @@ textarea {
 }
 
 .pulse-bubble-1 {
-    animation: pulse .4s ease 0s infinite alternate;
+  animation: pulse 0.4s ease 0s infinite alternate;
 }
 .pulse-bubble-2 {
-    animation: pulse .4s ease .2s infinite alternate;
+  animation: pulse 0.4s ease 0.2s infinite alternate;
 }
 .pulse-bubble-3 {
-    animation: pulse .4s ease .4s infinite alternate;
+  animation: pulse 0.4s ease 0.4s infinite alternate;
 }
 
 @keyframes pulse {
@@ -132,8 +132,8 @@ textarea {
     transform: scale(1);
   }
   to {
-    opacity: .25;
-    transform: scale(.75);
+    opacity: 0.25;
+    transform: scale(0.75);
   }
 }
 
