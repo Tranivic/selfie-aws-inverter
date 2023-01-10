@@ -24,10 +24,12 @@ const comparative = {
 };
 let newJson = {};
 let lastClipboardData = "";
-
 // EventListeners
+window.addEventListener("mouseover", () => {
+  clipboardIsValid();
+});
 window.addEventListener("focus", () => {
-  clipboardIsValid(true);
+  clipboardIsValid();
 });
 window.addEventListener("load", () => {
   preloader.classList.add("hide");
@@ -50,7 +52,7 @@ generateBtn.addEventListener("click", () => {
     if (object != false) {
       if (compareJSON(object, comparative)) {
         invertSelfie(object).then((_) => {
-          btnBehavior(generateBtn, false, "Inverter Selfie");
+          btnBehavior(generateBtn, false, "Selfie Invertida");
           btnBehavior(copyBtn, true, "Copiar");
         });
       }
@@ -158,6 +160,8 @@ const clipboardIsValid = async () => {
       !inputArea.value.length > 0
     ) {
       try {
+        console.log(clipboardData);
+        console.log(outputArea.value);
         lastClipboardData = clipboardData;
         activateSpanMsg(clipboardData);
       } catch (e) {
@@ -173,7 +177,6 @@ const activateSpanMsg = (data) => {
   spanMsg.classList.add("active");
   setTimeout(() => {
     spanMsg.classList.remove("active");
-    console.log("desativando spanMsg");
   }, 10000);
   autoPasteLink.addEventListener("click", () => {
     inputArea.value = data;
