@@ -4,6 +4,7 @@ const generateBtn = document.getElementById("generate-btn");
 const copyBtn = document.getElementById("copy-btn");
 const inputArea = document.getElementById("input-field");
 const outputArea = document.getElementById("output-field");
+const spanMsg = document.getElementById("border-wrap");
 const comparative = {
   data: {
     uuid: "",
@@ -21,20 +22,23 @@ const comparative = {
     templateId: "",
   },
 };
-var newJson = {};
-
+let newJson = {};
+let lastClipboardData = "";
 
 // EventListeners
-
+window.addEventListener("focus", () => {
+  clipboardIsValid(true);
+});
 window.addEventListener("load", () => {
   preloader.classList.add("hide");
 });
-inputArea.addEventListener("input", () => {
+inputArea.addEventListener("input", (key) => {
+  spanMsg.classList.remove("active");
   if (inputArea.value.length > 0) {
     btnBehavior(generateBtn, true, "Inverter Selfie");
-  } else {
-    btnBehavior(generateBtn, false, "Inverter Selfie");
+    return;
   }
+  btnBehavior(generateBtn, false, "Inverter Selfie");
 });
 inputArea.addEventListener("focus", () => {
   errorMsgBehavior("", "hide");
@@ -42,7 +46,7 @@ inputArea.addEventListener("focus", () => {
 generateBtn.addEventListener("click", () => {
   outputArea.value = "";
   btnBehavior(copyBtn, false, "Copiar");
-  isValidJson().then((object) => {
+  isValidJson(inputArea.value.trim()).then((object) => {
     if (object != false) {
       if (compareJSON(object, comparative)) {
         invertSelfie(object).then((_) => {
@@ -50,19 +54,24 @@ generateBtn.addEventListener("click", () => {
           btnBehavior(copyBtn, true, "Copiar");
         });
       }
+      return;
     }
+    errorMsgBehavior(`JSON inválido!`);
   });
 });
-copyBtn.addEventListener("click", () => {
-  if (outputArea.value.length) {
-    copyContent().then((_) => {
-      btnBehavior(copyBtn, false, "Copiado!");
-    });
+copyBtn.addEventListener("click", async () => {
+  try {
+    if (!outputArea.value.length) {
+      return;
+    }
+    await copyContent();
+    btnBehavior(copyBtn, false, "Copiado!");
+  } catch (error) {
+    alert(error.message);
   }
 });
 
 // Functions
-
 const invertSelfie = async (object) => {
   let dataFront = object.data.images.front;
   let dataBack = object.data.images.back;
@@ -73,42 +82,36 @@ const invertSelfie = async (object) => {
   outputArea.value = newJson;
   inputArea.value = "";
 };
-
 const copyContent = async () => {
   try {
     await navigator.clipboard.writeText(newJson);
     console.log("Copiado para o clipboard");
   } catch (err) {
-    alert("Algo deu errado em copiar para o clipboard");
+    errorMsgBehavior("Algum erro ocorreu");
   }
 };
-
-const isValidJson = async () => {
+const isValidJson = async (object) => {
   try {
-    const obj = JSON.parse(inputArea.value.trim());
+    const obj = JSON.parse(object);
     return obj;
   } catch (_) {
-    errorMsgBehavior(
-      "JSON inválido, copie novamente na AWS e refaça o processo!"
-    );
     return false;
   }
 };
-
 const compareJSON = (json1, json2) => {
   if (json1.data && json2.data) {
     const keys1 = Object.keys(json1.data);
     const keys2 = Object.keys(json2.data);
 
     if (keys1.length !== keys2.length) {
-      errorMsgBehavior(`JSON inválido, faltando algum parametro!`);
+      errorMsgBehavior(`JSON inválido!`);
       return false;
     }
 
     for (const key of keys1) {
       if (!json2.data.hasOwnProperty(key)) {
         errorMsgBehavior(
-          `O atributo ${key} está diferente do padrão, copie novamente na AWS e refaça o processo!`
+          `A propriedade ${key} está diferente do padrão, copie novamente na AWS e refaça o processo!`
         );
         return false;
       }
@@ -116,7 +119,7 @@ const compareJSON = (json1, json2) => {
     for (const key of Object.keys(json1.data.images)) {
       if (!json2.data.images.hasOwnProperty(key)) {
         errorMsgBehavior(
-          `O atributo ${key} está diferente do padrão, copie novamente na AWS e refaça o processo!`
+          `A propriedade ${key} está diferente do padrão, copie novamente na AWS e refaça o processo!`
         );
         return false;
       }
@@ -127,27 +130,69 @@ const compareJSON = (json1, json2) => {
       );
       return false;
     }
+    if (json1.data.autoCorrection === true) {
+      errorMsgBehavior(
+        "A propriedade AutoCorrection está com o valor alterado, copie novamente na AWS e refaça o processo!"
+      );
+      return false;
+    }
     return true;
   }
   errorMsgBehavior(
-    "O parametro está com a propriedade data incorreta, copie novamente na AWS e refaça o processo"
+    "Propriedade fora do parametro ideal da CAF, copie novamente na AWS e refaça o processo"
   );
   return false;
 };
-
+const clipboardIsValid = async () => {
+  try {
+    const clipboardData = await navigator.clipboard.readText();
+    const object = await isValidJson(clipboardData);
+    if (!object) {
+      return;
+    }
+    if (
+      object.data &&
+      object.data.images &&
+      object.data.autoClassify === true &&
+      clipboardData !== lastClipboardData &&
+      !inputArea.value.length > 0
+    ) {
+      try {
+        lastClipboardData = clipboardData;
+        activateSpanMsg(clipboardData);
+      } catch (e) {
+        console.error("Error activateSpanMsg: ", e);
+      }
+    }
+  } catch (error) {
+    console.error("Error reading clipboard: ", error);
+  }
+};
+const activateSpanMsg = (data) => {
+  const autoPasteLink = document.getElementById("auto-paste");
+  spanMsg.classList.add("active");
+  setTimeout(() => {
+    spanMsg.classList.remove("active");
+    console.log("desativando spanMsg");
+  }, 10000);
+  autoPasteLink.addEventListener("click", () => {
+    inputArea.value = data;
+    spanMsg.classList.remove("active");
+    btnBehavior(generateBtn, true, "Inverter Selfie");
+  });
+};
 const errorMsgBehavior = (msg, hide) => {
   if (!hide) {
     errorMsg.innerHTML = msg;
     errorMsg.classList.add("active");
     errorMsg.classList.remove("disabled");
     inputArea.classList.add("error");
-  } else {
-    errorMsg.classList.remove("active");
-    errorMsg.classList.add("disabled");
-    inputArea.classList.remove("error");
+    return;
   }
+  errorMsg.classList.remove("active");
+  errorMsg.classList.add("disabled");
+  inputArea.classList.remove("error");
 };
-
 const btnBehavior = (type, turnOn, msg) => {
   if (type === generateBtn) {
     if (turnOn === false) {
