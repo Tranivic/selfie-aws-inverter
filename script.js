@@ -22,19 +22,14 @@ const comparative = {
     templateId: "",
   },
 };
-let newJson = {};
 let lastClipboardData = "";
+
 // EventListeners
-window.addEventListener("mouseover", () => {
-  clipboardIsValid();
-});
-window.addEventListener("focus", () => {
-  clipboardIsValid();
-});
-window.addEventListener("load", () => {
-  preloader.classList.add("hide");
-});
-inputArea.addEventListener("input", (key) => {
+window.addEventListener("mouseover", () => clipboardIsValid());
+window.addEventListener("focus", () => clipboardIsValid());
+window.addEventListener("load", () => preloader.classList.add("hide"));
+inputArea.addEventListener("focus", () => errorMsgBehavior("", "hide"));
+inputArea.addEventListener("input", () => {
   spanMsg.classList.remove("active");
   if (inputArea.value.length > 0) {
     btnBehavior(generateBtn, true, "Inverter Selfie");
@@ -42,71 +37,69 @@ inputArea.addEventListener("input", (key) => {
   }
   btnBehavior(generateBtn, false, "Inverter Selfie");
 });
-inputArea.addEventListener("focus", () => {
-  errorMsgBehavior("", "hide");
-});
-generateBtn.addEventListener("click", () => {
+generateBtn.addEventListener("click", async () => {
   outputArea.value = "";
   btnBehavior(copyBtn, false, "Copiar");
-  isValidJson(inputArea.value.trim()).then((object) => {
-    if (object != false) {
-      if (compareJSON(object, comparative)) {
-        invertSelfie(object).then((_) => {
-          btnBehavior(generateBtn, false, "Selfie Invertida");
-          btnBehavior(copyBtn, true, "Copiar");
-        });
-      }
-      return;
-    }
-    errorMsgBehavior(`JSON inválido!`);
-  });
-});
-copyBtn.addEventListener("click", async () => {
   try {
-    if (!outputArea.value.length) {
+    const object = await isValidJson(inputArea.value.trim());
+    if (object && compareJSON(object, comparative)) {
+      invertSelfie(object);
+      btnBehavior(copyBtn, true, "Copiar");
+      btnBehavior(generateBtn, false, "Selfie Invertida");
       return;
     }
-    await copyContent();
-    btnBehavior(copyBtn, false, "Copiado!");
-  } catch (error) {
-    alert(error.message);
+    if (!object) {
+      errorMsgBehavior("JSON inválido");
+    }
+  } catch (err) {
+    errorMsgBehavior(`Algum erro ocorreu: ${err}`);
   }
+});
+copyBtn.addEventListener("click", () => {
+  copyContent();
 });
 
 // Functions
-const invertSelfie = async (object) => {
-  let dataFront = object.data.images.front;
-  let dataBack = object.data.images.back;
+const invertSelfie = (object) => {
+  let frontValue = object.data.images.front;
+  let backValue = object.data.images.back;
+  object.data.images.back = frontValue;
+  object.data.images.front = backValue;
   object.data.autoClassify = false;
-  object.data.images.back = dataFront;
-  object.data.images.front = dataBack;
-  newJson = JSON.stringify(object);
-  outputArea.value = newJson;
+  outputArea.value = JSON.stringify(object);
   inputArea.value = "";
 };
-const copyContent = async () => {
+const copyContent = () => {
   try {
-    await navigator.clipboard.writeText(newJson);
-    console.log("Copiado para o clipboard");
+    const generatedJSON = outputArea.value;
+    if (generatedJSON) {
+      navigator.clipboard.writeText(generatedJSON);
+      btnBehavior(copyBtn, false, "Copiado!");
+    }
   } catch (err) {
-    errorMsgBehavior("Algum erro ocorreu");
+    console.error("Failed to copy: ", err);
   }
 };
 const isValidJson = async (object) => {
   try {
     const obj = JSON.parse(object);
-    return obj;
+    if (typeof obj === "object") {
+      return obj;
+    }
+    return false;
   } catch (_) {
     return false;
   }
 };
 const compareJSON = (json1, json2) => {
-  if (json1.data && json2.data) {
+  if (json1.data) {
     const keys1 = Object.keys(json1.data);
     const keys2 = Object.keys(json2.data);
 
     if (keys1.length !== keys2.length) {
-      errorMsgBehavior(`JSON inválido!`);
+      errorMsgBehavior(
+        `JSON com tamanho diferente do padrão, copie novamente na AWS e refaça o processo!`
+      );
       return false;
     }
 
@@ -149,27 +142,19 @@ const clipboardIsValid = async () => {
   try {
     const clipboardData = await navigator.clipboard.readText();
     const object = await isValidJson(clipboardData);
-    if (!object) {
-      return;
-    }
     if (
+      object &&
       object.data &&
       object.data.images &&
       object.data.autoClassify === true &&
       clipboardData !== lastClipboardData &&
       !inputArea.value.length > 0
     ) {
-      try {
-        console.log(clipboardData);
-        console.log(outputArea.value);
-        lastClipboardData = clipboardData;
-        activateSpanMsg(clipboardData);
-      } catch (e) {
-        console.error("Error activateSpanMsg: ", e);
-      }
+      lastClipboardData = clipboardData;
+      activateSpanMsg(clipboardData);
     }
-  } catch (error) {
-    console.error("Error reading clipboard: ", error);
+  } catch (err) {
+    console.error("Error reading clipboard: ", err);
   }
 };
 const activateSpanMsg = (data) => {
